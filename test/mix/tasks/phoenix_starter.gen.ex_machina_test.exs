@@ -24,6 +24,11 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.ExMachinaTest do
   end
   """
 
+  @test_helper_src """
+  ExUnit.start()
+  Ecto.Adapters.SQL.Sandbox.mode(Test.Repo, :manual)
+  """
+
   @data_case_src """
   defmodule Test.DataCase do
     use ExUnit.CaseTemplate
@@ -46,7 +51,8 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.ExMachinaTest do
       Map.merge(
         %{
           "test/support/conn_case.ex" => @conn_case_src,
-          "test/support/data_case.ex" => @data_case_src
+          "test/support/data_case.ex" => @data_case_src,
+          "test/test_helper.exs" => @test_helper_src
         },
         extra
       )
@@ -95,6 +101,26 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.ExMachinaTest do
     |> assert_has_patch("test/support/data_case.ex", """
     + |      alias Test.Factory
     """)
+  end
+
+  test "injects Application.ensure_all_started(:ex_machina) before ExUnit.start() in test_helper.exs" do
+    phx_like_project()
+    |> Igniter.compose_task("phoenix_starter.gen.ex_machina", [])
+    |> assert_has_patch("test/test_helper.exs", """
+    + |{:ok, _} = Application.ensure_all_started(:ex_machina)
+    """)
+  end
+
+  test "leaves test_helper.exs untouched when :ex_machina is already started" do
+    already_started_helper = """
+    {:ok, _} = Application.ensure_all_started(:ex_machina)
+    ExUnit.start()
+    Ecto.Adapters.SQL.Sandbox.mode(Test.Repo, :manual)
+    """
+
+    phx_like_project(%{"test/test_helper.exs" => already_started_helper})
+    |> Igniter.compose_task("phoenix_starter.gen.ex_machina", [])
+    |> assert_unchanged("test/test_helper.exs")
   end
 
   test "warns when a case file is missing" do

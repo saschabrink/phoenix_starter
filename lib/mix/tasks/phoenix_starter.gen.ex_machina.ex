@@ -9,7 +9,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.ExMachina.Docs do
     """
     #{short_doc()}
 
-    Does three things:
+    Does four things:
 
     1. Adds `{:ex_machina, "~> 2.8", only: :test}` to `mix.exs`.
     2. Creates `test/support/factory.ex` — `<App>.Factory` — with
@@ -17,8 +17,11 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.ExMachina.Docs do
     3. Injects `alias <App>.Factory` into the `using do quote do ... end`
        block of `test/support/conn_case.ex` and `test/support/data_case.ex`
        (if either exists).
+    4. Inserts `{:ok, _} = Application.ensure_all_started(:ex_machina)`
+       before `ExUnit.start()` in `test/test_helper.exs` (per ExMachina's
+       own setup instructions).
 
-    Each step is idempotent. Missing case files are reported as warnings,
+    Each step is idempotent. Missing files are reported as warnings,
     not errors.
 
     ## Example
@@ -65,6 +68,54 @@ if Code.ensure_loaded?(Igniter) do
       |> create_factory(factory_module, app_module)
       |> alias_factory_in_case("test/support/conn_case.ex", factory_module)
       |> alias_factory_in_case("test/support/data_case.ex", factory_module)
+      |> start_ex_machina_in_test_helper()
+    end
+
+    @ensure_started_line "{:ok, _} = Application.ensure_all_started(:ex_machina)"
+
+    defp start_ex_machina_in_test_helper(igniter) do
+      path = "test/test_helper.exs"
+
+      cond do
+        not Igniter.exists?(igniter, path) ->
+          Igniter.add_warning(igniter, """
+          phoenix_starter.gen.ex_machina: #{path} not found. Add this line manually
+          before `ExUnit.start()`:
+
+              #{@ensure_started_line}
+          """)
+
+        true ->
+          Igniter.update_file(igniter, path, fn source ->
+            content = Rewrite.Source.get(source, :content)
+
+            cond do
+              String.contains?(content, ":ex_machina") ->
+                source
+
+              Regex.match?(~r/^\s*ExUnit\.start\(\)/m, content) ->
+                Rewrite.Source.update(
+                  source,
+                  :content,
+                  Regex.replace(
+                    ~r/^(\s*ExUnit\.start\(\))/m,
+                    content,
+                    "#{@ensure_started_line}\n\\1",
+                    global: false
+                  )
+                )
+
+              true ->
+                {:warning,
+                 """
+                 phoenix_starter.gen.ex_machina: could not find `ExUnit.start()` in #{path}.
+                 Add this line manually before `ExUnit.start()`:
+
+                     #{@ensure_started_line}
+                 """}
+            end
+          end)
+      end
     end
 
     @doc false
