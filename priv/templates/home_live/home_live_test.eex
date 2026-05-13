@@ -1,0 +1,13 @@
+defmodule <%= @web_module %>.Live.HomeLiveTest do
+  use <%= @web_module %>.ConnCase, async: true
+
+  import Phoenix.LiveViewTest
+
+  describe ":home" do
+    test "renders the welcome heading", %{conn: conn} do
+      {:ok, _live, html} = live(conn, ~p"/")
+
+      assert html =~ "Welcome"
+    end
+  end
+end

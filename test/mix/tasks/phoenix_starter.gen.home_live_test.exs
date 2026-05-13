@@ -88,10 +88,12 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.HomeLiveTest do
       defmodule TestWeb.Live.HomeLive do
         use TestWeb, :live_view
 
-        @impl PhoenixPageMeta.LiveView
-        def page_meta(_socket, :index) do
-          %TestWeb.PageMeta{title: "Welcome", path: "/"}
-        end
+        @impl true
+        def page_meta(_socket, :home),
+          do: %PageMeta{
+            title: "Welcome",
+            path: "/"
+          }
 
         @impl true
         def render(assigns) do
@@ -102,7 +104,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.HomeLiveTest do
 
         @impl true
         def mount(_params, _session, socket) do
-          {:ok, assign_page_meta(socket)}
+          {:ok, socket |> assign_page_meta()}
         end
       end
       """)
@@ -113,7 +115,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.HomeLiveTest do
       |> Igniter.compose_task("phoenix_starter.gen.home_live", [])
       |> assert_has_patch("lib/test_web/router.ex", """
       - |      get "/", PageController, :home
-      + |      live "/", Live.HomeLive, :index
+      + |      live "/", Live.HomeLive, :home
       """)
     end
 
@@ -126,6 +128,46 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.HomeLiveTest do
         "lib/test_web/controllers/page_html/home.html.heex",
         "test/test_web/controllers/page_controller_test.exs"
       ])
+    end
+
+    test "creates a LiveView test at the conventional path" do
+      phx_like_project()
+      |> Igniter.compose_task("phoenix_starter.gen.home_live", [])
+      |> assert_creates("test/test_web/live/home_live_test.exs", """
+      defmodule TestWeb.Live.HomeLiveTest do
+        use TestWeb.ConnCase, async: true
+
+        import Phoenix.LiveViewTest
+
+        describe ":home" do
+          test "renders the welcome heading", %{conn: conn} do
+            {:ok, _live, html} = live(conn, ~p"/")
+
+            assert html =~ "Welcome"
+          end
+        end
+      end
+      """)
+    end
+
+    test "home_live_test_body/1 renders the test template with the given web module" do
+      body = Mix.Tasks.PhoenixStarter.Gen.HomeLive.home_live_test_body(MyAppWeb)
+
+      assert body =~ "defmodule MyAppWeb.Live.HomeLiveTest do"
+      assert body =~ "use MyAppWeb.ConnCase"
+      assert body =~ ~s|live(conn, ~p"/")|
+      refute body =~ "<%="
+    end
+
+    test "home_live_body/1 renders the template with the given web module" do
+      body = Mix.Tasks.PhoenixStarter.Gen.HomeLive.home_live_body(MyAppWeb)
+
+      assert body =~ "use MyAppWeb, :live_view"
+      assert body =~ "%PageMeta{"
+      assert body =~ ~s|title: "Welcome"|
+      assert body =~ ~s|path: "/"|
+      assert body =~ "socket |> assign_page_meta()"
+      refute body =~ "<%="
     end
 
     test "is idempotent — re-running on an already-migrated project does nothing" do
