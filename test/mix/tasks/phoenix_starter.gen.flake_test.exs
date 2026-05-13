@@ -17,4 +17,12 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.FlakeTest do
     |> Igniter.compose_task("phoenix_starter.gen.flake", [])
     |> assert_unchanged(["flake.nix", "flake.lock"])
   end
+
+  test "patches .gitignore with /.nix/" do
+    test_project()
+    |> Igniter.compose_task("phoenix_starter.gen.flake", [])
+    |> assert_has_patch(".gitignore", """
+    + |/.nix/
+    """)
+  end
 end

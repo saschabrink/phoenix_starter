@@ -59,6 +59,7 @@ if Code.ensure_loaded?(Igniter) do
       igniter
       |> Igniter.create_new_file("flake.nix", @flake_nix, on_exists: :skip)
       |> Igniter.create_new_file("flake.lock", @flake_lock, on_exists: :skip)
+      |> PhoenixStarter.Project.Gitignore.add_line("/.nix/")
     end
   end
 else
