@@ -36,6 +36,7 @@ if Code.ensure_loaded?(Igniter) do
         example: __MODULE__.Docs.example(),
         composes: [
           "phoenix_starter.gen.flake",
+          "phoenix_starter.gen.formatter",
           "phoenix_starter.gen.core_contexts",
           "phoenix_starter.gen.page_meta",
           "phoenix_starter.gen.postgres",
@@ -48,6 +49,7 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       igniter
       |> Igniter.compose_task("phoenix_starter.gen.flake", [])
+      |> Igniter.compose_task("phoenix_starter.gen.formatter", [])
       |> Igniter.compose_task("phoenix_starter.gen.core_contexts", [])
       |> Igniter.compose_task("phoenix_starter.gen.page_meta", [])
       |> Igniter.compose_task("phoenix_starter.gen.postgres", [])
