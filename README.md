@@ -40,6 +40,7 @@ All tasks are idempotent — re-running them on the same project state is a no-o
 | `phoenix_starter.gen.flake` | Creates a minimal Nix dev shell (`flake.nix` + `flake.lock`), adds `/.nix/` to `.gitignore`. |
 | `phoenix_starter.gen.postgres` | Wires a Postgres-backed project for managed local Postgres via `pg_spawner`. Adds the dep, drops `pkgs.postgresql_18` into the flake, exports `PGPORT=15432` in the shellHook, sets the Repo port in `config/dev.exs`, ignores `/priv/db/`. Aborts with a warning if `:postgrex` is not in deps. |
 | `phoenix_starter.gen.sqlite` | Moves a SQLite-backed project's dev/test databases into `priv/db/<name>_(dev\|test).db` and adds matching gitignore patterns. The DB name defaults to the project directory's basename with its file extension stripped (`lingofox.ai` → `lingofox`); override with `--db-name`. Aborts if `:ecto_sqlite3` is not in deps. |
+| `phoenix_starter.gen.core_contexts` | Adds the exfoundry "core contexts" combo: `ecto_context` (scoped CRUD + permissions) and `static_context` (in-memory lookup data). Wires both into `.formatter.exs`. |
 
 ## Architecture
 
@@ -63,6 +64,7 @@ In rough order of priority:
 - [x] `PhoenixStarter.Project.Flake` helper — `add_build_input/2`, `add_shell_hook/3` (regex-anchored on `pkgs.elixir_*`).
 - [x] `gen.postgres` — wires existing Postgres-backed projects for managed local Postgres via `pg_spawner`.
 - [x] `gen.sqlite` — moves SQLite dev/test databases into `priv/db/`.
+- [x] `gen.core_contexts` — adds the exfoundry ecto_context + static_context combo.
 - [ ] `gen.kamal` — `config/deploy.yml`, Ruby in flake, gem dir in `.gitignore`.
 - [ ] `gen.assets` — adds Node to flake when `assets/package.json` is present.
 - [ ] `gen.context_namespace` — enforces the `Platform.<Namespace>.<Context>` convention (overrides Phoenix's default `phx.gen.context` location).
