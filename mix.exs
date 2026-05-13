@@ -21,7 +21,10 @@ defmodule PhoenixStarter.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:igniter, "~> 0.8", optional: true}
+      {:igniter, "~> 0.8", optional: true},
+      # Dev/test only — used to refresh `priv/templates/credo/credo.exs.snapshot`
+      # via `mix phoenix_starter.refresh_credo_snapshot`.
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 end
