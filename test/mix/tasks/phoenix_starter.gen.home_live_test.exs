@@ -81,11 +81,11 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.HomeLiveTest do
   end
 
   describe "phoenix_starter.gen.home_live" do
-    test "creates TestWeb.HomeLive at the conventional path" do
+    test "creates TestWeb.Live.HomeLive at the conventional path" do
       phx_like_project()
       |> Igniter.compose_task("phoenix_starter.gen.home_live", [])
       |> assert_creates("lib/test_web/live/home_live.ex", """
-      defmodule TestWeb.HomeLive do
+      defmodule TestWeb.Live.HomeLive do
         use TestWeb, :live_view
 
         @impl PhoenixPageMeta.LiveView
@@ -113,7 +113,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.HomeLiveTest do
       |> Igniter.compose_task("phoenix_starter.gen.home_live", [])
       |> assert_has_patch("lib/test_web/router.ex", """
       - |      get "/", PageController, :home
-      + |      live "/", HomeLive, :index
+      + |      live "/", Live.HomeLive, :index
       """)
     end
 

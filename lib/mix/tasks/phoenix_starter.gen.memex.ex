@@ -75,7 +75,7 @@ if Code.ensure_loaded?(Igniter) do
 
       igniter
       |> Igniter.create_new_file("memex.toml", render_memex_toml(name), on_exists: :skip)
-      |> Igniter.create_new_file("docs/#{name}/.gitkeep", "")
+      |> Igniter.create_new_file("docs/#{name}/.gitkeep", "\n")
       |> Igniter.create_new_file(@pre_hook_path, @pre_hook_body, on_exists: :skip)
       |> Igniter.create_new_file(@post_hook_path, @post_hook_body, on_exists: :skip)
       |> PhoenixStarter.Project.Claude.add_hook(

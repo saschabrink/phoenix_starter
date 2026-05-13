@@ -50,7 +50,7 @@ if Code.ensure_loaded?(Igniter) do
     @impl Igniter.Mix.Task
     def igniter(igniter) do
       web_module = PhoenixIgniter.web_module(igniter)
-      home_live = Module.concat(web_module, HomeLive)
+      home_live = Module.concat([web_module, Live, HomeLive])
       page_controller = Module.concat(web_module, PageController)
       page_html = Module.concat(web_module, PageHTML)
 
@@ -66,15 +66,10 @@ if Code.ensure_loaded?(Igniter) do
       if exists? do
         igniter
       else
-        web_dir = web_module |> inspect() |> Macro.underscore()
-        path = "lib/#{web_dir}/live/home_live.ex"
-
-        Igniter.Project.Module.create_module(
-          igniter,
-          home_live,
-          home_live_body(web_module),
-          path: path
-        )
+        # Module is `<AppWeb>.Live.HomeLive`, which Igniter's `move_files`
+        # step lands at `lib/<app_web>/live/home_live.ex` — the Phoenix
+        # `live/` convention without needing a `:path` override.
+        Igniter.Project.Module.create_module(igniter, home_live, home_live_body(web_module))
       end
     end
 
@@ -122,7 +117,7 @@ if Code.ensure_loaded?(Igniter) do
                  Function.argument_matches_predicate?(call, 2, &Common.nodes_equal?(&1, :home))
              end) do
           {:ok, zipper} ->
-            {:ok, Common.replace_code(zipper, ~s|live "/", HomeLive, :index|)}
+            {:ok, Common.replace_code(zipper, ~s|live "/", Live.HomeLive, :index|)}
 
           :error ->
             # Route already rewritten or never existed — idempotent no-op

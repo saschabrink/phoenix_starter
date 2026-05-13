@@ -18,7 +18,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.MemexTest do
     test "creates docs/<name>/.gitkeep so the dir is tracked" do
       test_project()
       |> Igniter.compose_task("phoenix_starter.gen.memex", ["--name", "myapp"])
-      |> assert_creates("docs/myapp/.gitkeep", "")
+      |> assert_creates("docs/myapp/.gitkeep", "\n")
     end
 
     test "drops the two memex hook scripts" do
