@@ -48,7 +48,8 @@ if Code.ensure_loaded?(Igniter) do
           "phoenix_starter.gen.postgres",
           "phoenix_starter.gen.sqlite",
           "phoenix_starter.gen.ex_machina",
-          "phoenix_starter.gen.ecto_trim"
+          "phoenix_starter.gen.ecto_trim",
+          "phoenix_starter.gen.bump_assets"
         ]
       }
     end
@@ -70,6 +71,7 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("phoenix_starter.gen.sqlite", [])
       |> Igniter.compose_task("phoenix_starter.gen.ex_machina", [])
       |> Igniter.compose_task("phoenix_starter.gen.ecto_trim", [])
+      |> Igniter.compose_task("phoenix_starter.gen.bump_assets", [])
     end
   end
 else

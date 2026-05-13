@@ -51,6 +51,7 @@ All tasks are idempotent — re-running them on the same project state is a no-o
 | `phoenix_starter.gen.home_live` | Replaces the default Phoenix page controller with `<AppWeb>.HomeLive`. Rewrites the `get "/", PageController, :home` route to `live "/", HomeLive, :index`, removes the controller, HTML module, template, and test. Installs `phoenix_page_meta` as a dep. |
 | `phoenix_starter.gen.ex_machina` | Adds `ex_machina` (test-only), creates `<App>.Factory` at `test/support/factory.ex` (`use ExMachina.Ecto, repo: <App>.Repo`), and aliases `<App>.Factory` inside the `using do quote do` blocks of `conn_case.ex` and `data_case.ex`. |
 | `phoenix_starter.gen.ecto_trim` | Adds `{:ecto_trim, "~> 1.0"}` — parameterized Ecto type that trims and normalizes whitespace on cast and dump. |
+| `phoenix_starter.gen.bump_assets` | Bumps `config :esbuild, :version` and `config :tailwind, :version` to the latest GitHub release tag. Short timeout with a baked-in fallback on network failure. Emits a notice to run `mix assets.setup` manually for the binary download. Supports `--esbuild=X --tailwind=Y` overrides. |
 
 ## Architecture
 
@@ -75,6 +76,7 @@ In rough order of priority:
 - [x] `gen.phx_server_alias` — adds `s: "phx.server"` to mix aliases.
 - [x] `gen.ex_machina` — ExMachina dep + stub Factory + ConnCase/DataCase aliasing.
 - [x] `gen.ecto_trim` — adds ecto_trim dep.
+- [x] `gen.bump_assets` — pins esbuild + tailwind to latest GitHub releases (with fallback) and schedules `assets.setup`.
 - [x] `gen.formatter` — sets `line_length: 150`.
 - [x] `gen.format_hook` — Claude Code post-write hook for `mix format`.
 - [x] `gen.memex` — memex.toml + Claude blueprint-injection hooks.
