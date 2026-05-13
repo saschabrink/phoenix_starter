@@ -1,0 +1,24 @@
+project_name = "{{project_name}}"
+
+# Files outside the blueprint sources that still reference blueprints via
+# [[slug]]. Scanned by `memex broken-refs`, not indexed.
+also_scan = ["CLAUDE.md", "AGENTS.md", "TODOS.md"]
+
+# Project-owned blueprints (architecture, naming, deployment).
+[{{project_name}}]
+mount = "docs/{{project_name}}"
+
+# Shared Phoenix/LiveView blueprints. Cloned from the exfoundry remote;
+# `memex sync` pulls updates. Auto-gitignored.
+[phoenix-framework]
+mount  = "docs/phoenix-framework"
+remote = "https://github.com/exfoundry/memex-blueprints-phoenix-framework.git"
+
+# Hex dependency usage-rules. Each package ships a `usage-rules.md` at
+# the root of its deps dir; index_filename maps it to the parent slug.
+# Example: deps/ecto_context/usage-rules.md → slug `deps/ecto_context`.
+[deps]
+mount          = "deps"
+include        = ["*/usage-rules.md"]
+index_filename = "usage-rules.md"
+readonly       = true
