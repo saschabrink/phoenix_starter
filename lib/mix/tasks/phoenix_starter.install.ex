@@ -37,6 +37,7 @@ if Code.ensure_loaded?(Igniter) do
         composes: [
           "phoenix_starter.gen.flake",
           "phoenix_starter.gen.direnv",
+          "phoenix_starter.gen.phx_server_alias",
           "phoenix_starter.gen.formatter",
           "phoenix_starter.gen.format_hook",
           "phoenix_starter.gen.memex",
@@ -55,6 +56,7 @@ if Code.ensure_loaded?(Igniter) do
       igniter
       |> Igniter.compose_task("phoenix_starter.gen.flake", [])
       |> Igniter.compose_task("phoenix_starter.gen.direnv", [])
+      |> Igniter.compose_task("phoenix_starter.gen.phx_server_alias", [])
       |> Igniter.compose_task("phoenix_starter.gen.formatter", [])
       |> Igniter.compose_task("phoenix_starter.gen.format_hook", [])
       |> Igniter.compose_task("phoenix_starter.gen.memex", [])
