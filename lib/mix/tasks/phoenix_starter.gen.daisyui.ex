@@ -19,6 +19,11 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.Daisyui.Docs do
        * `@plugin "../vendor/daisyui-theme"` → `@plugin "daisyui/theme"`
          (Tailwind 4 resolves both via node_modules.)
     3. Removes `assets/vendor/daisyui.js` and `assets/vendor/daisyui-theme.js`.
+    4. Extracts every daisyUI `@plugin` block (the main `@plugin "daisyui"
+       activation and each `@plugin "daisyui/theme"` block) out of `app.css`
+       into a new `assets/css/daisyui-themes.css`, replacing them with a
+       single `@import "./daisyui-themes.css";`. The obsolete "fetch the
+       latest version" comments preceding them are dropped along the way.
 
     Each step is idempotent. Missing or heavily-edited files emit warnings
     rather than aborting.
@@ -41,6 +46,8 @@ if Code.ensure_loaded?(Igniter) do
     use Igniter.Mix.Task
 
     @app_css_path "assets/css/app.css"
+    @themes_css_path "assets/css/daisyui-themes.css"
+    @themes_import ~s|@import "./daisyui-themes.css";|
 
     @vendor_files [
       "assets/vendor/daisyui.js",
@@ -62,6 +69,7 @@ if Code.ensure_loaded?(Igniter) do
       |> PhoenixStarter.Project.Npm.add_dependency("daisyui", "^5.0.50")
       |> rewrite_app_css()
       |> remove_vendor_files()
+      |> split_themes()
     end
 
     defp rewrite_app_css(igniter) do
@@ -119,6 +127,79 @@ if Code.ensure_loaded?(Igniter) do
           igniter
         end
       end)
+    end
+
+    # Matches a daisyUI `@plugin` block (the main `daisyui` activation OR a
+    # `daisyui/theme` block), optionally preceded by a `/* ... */` comment.
+    # `(?:[^*]|\*(?!\/))*` is the classic "match a C-style comment body
+    # without straying past the next `*/`" idiom — avoids runaway
+    # backtracking where a non-greedy `[\s\S]*?` would span multiple
+    # comments. CSS variable values never contain `{` or `}`, so `[^}]*` is
+    # enough for the plugin body.
+    @daisyui_block_regex ~r/(?:[ \t]*\/\*(?:[^*]|\*(?!\/))*\*\/\s*\n)?[ \t]*@plugin\s+"daisyui(?:\/theme)?"\s*\{[^}]*\}\n?/
+
+    defp split_themes(igniter) do
+      cond do
+        Igniter.exists?(igniter, @themes_css_path) ->
+          igniter
+
+        not Igniter.exists?(igniter, @app_css_path) ->
+          igniter
+
+        true ->
+          igniter = Igniter.include_existing_file(igniter, @app_css_path)
+          content = Rewrite.Source.get(Rewrite.source!(igniter.rewrite, @app_css_path), :content)
+
+          case extract_theme_blocks(content) do
+            :no_blocks ->
+              igniter
+
+            {themes_css, new_app_css} ->
+              igniter
+              |> Igniter.create_new_file(@themes_css_path, themes_css, on_exists: :skip)
+              |> Igniter.update_file(@app_css_path, fn source ->
+                Rewrite.Source.update(source, :content, new_app_css)
+              end)
+          end
+      end
+    end
+
+    defp extract_theme_blocks(content) do
+      blocks = Regex.scan(@daisyui_block_regex, content) |> List.flatten()
+
+      if blocks == [] do
+        :no_blocks
+      else
+        # Strip leading comments (the "fetch the latest version" docs are
+        # obsolete once we're on npm) and trailing newlines so each block
+        # is just the @plugin {...} body.
+        cleaned =
+          blocks
+          |> Enum.map(fn block ->
+            block
+            |> String.replace(~r/^\s*\/\*[\s\S]*?\*\/\s*\n/, "")
+            |> String.trim_trailing()
+          end)
+
+        themes_css = Enum.join(cleaned, "\n\n") <> "\n"
+
+        # Replace the FIRST daisyUI block with the @import line; remove the
+        # rest. This keeps the @import sitting where the daisyUI stanza used
+        # to start, preserving the visual order of app.css.
+        new_app_css =
+          content
+          |> String.replace(@daisyui_block_regex, @themes_import <> "\n", global: false)
+          |> String.replace(@daisyui_block_regex, "")
+          |> collapse_blank_runs()
+
+        {themes_css, new_app_css}
+      end
+    end
+
+    # Cosmetic: when blocks are excised we can end up with runs of 3+ blank
+    # lines. Collapse to at most 2 (i.e. one blank between top-level stanzas).
+    defp collapse_blank_runs(content) do
+      Regex.replace(~r/\n{3,}/, content, "\n\n")
     end
   end
 else
