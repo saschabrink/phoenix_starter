@@ -50,7 +50,8 @@ if Code.ensure_loaded?(Igniter) do
           "phoenix_starter.gen.ex_machina",
           "phoenix_starter.gen.ecto_trim",
           "phoenix_starter.gen.bump_assets",
-          "phoenix_starter.gen.credo"
+          "phoenix_starter.gen.credo",
+          "phoenix_starter.gen.topbar"
         ]
       }
     end
@@ -74,6 +75,7 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("phoenix_starter.gen.ecto_trim", [])
       |> Igniter.compose_task("phoenix_starter.gen.bump_assets", [])
       |> Igniter.compose_task("phoenix_starter.gen.credo", [])
+      |> Igniter.compose_task("phoenix_starter.gen.topbar", [])
     end
   end
 else
