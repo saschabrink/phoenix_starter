@@ -1,0 +1,10 @@
+@moduledoc false
+use ExMachina.Ecto, repo: <%= @app_module %>.Repo
+
+# Add factories here, e.g.:
+#
+#   def user_factory do
+#     %<%= @app_module %>.Accounts.User{
+#       email: sequence(:email, &"user-#{&1}@example.com")
+#     }
+#   end

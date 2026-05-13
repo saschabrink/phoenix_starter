@@ -49,6 +49,7 @@ All tasks are idempotent — re-running them on the same project state is a no-o
 | `phoenix_starter.gen.core_contexts` | Adds the exfoundry "core contexts" combo: `ecto_context` (scoped CRUD + permissions) and `static_context` (in-memory lookup data). Wires both into `.formatter.exs`. |
 | `phoenix_starter.gen.page_meta` | Adds `phoenix_page_meta` and triggers its installer: creates the project-local `<AppWeb>.PageMeta` struct, injects SEO `<MetaTags>` into `root.html.heex`, and wires LiveView callbacks. |
 | `phoenix_starter.gen.home_live` | Replaces the default Phoenix page controller with `<AppWeb>.HomeLive`. Rewrites the `get "/", PageController, :home` route to `live "/", HomeLive, :index`, removes the controller, HTML module, template, and test. Installs `phoenix_page_meta` as a dep. |
+| `phoenix_starter.gen.ex_machina` | Adds `ex_machina` (test-only), creates `<App>.Factory` at `test/support/factory.ex` (`use ExMachina.Ecto, repo: <App>.Repo`), and aliases `<App>.Factory` inside the `using do quote do` blocks of `conn_case.ex` and `data_case.ex`. |
 
 ## Architecture
 
@@ -71,6 +72,7 @@ In rough order of priority:
 - [x] `gen.flake` — base Nix dev shell.
 - [x] `gen.direnv` — universal `.envrc` + `.direnv/`/`.env` gitignore.
 - [x] `gen.phx_server_alias` — adds `s: "phx.server"` to mix aliases.
+- [x] `gen.ex_machina` — ExMachina dep + stub Factory + ConnCase/DataCase aliasing.
 - [x] `gen.formatter` — sets `line_length: 150`.
 - [x] `gen.format_hook` — Claude Code post-write hook for `mix format`.
 - [x] `gen.memex` — memex.toml + Claude blueprint-injection hooks.
