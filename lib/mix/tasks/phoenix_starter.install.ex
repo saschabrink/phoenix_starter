@@ -42,6 +42,7 @@ if Code.ensure_loaded?(Igniter) do
           "phoenix_starter.gen.npm",
           "phoenix_starter.gen.core_contexts",
           "phoenix_starter.gen.page_meta",
+          "phoenix_starter.gen.home_live",
           "phoenix_starter.gen.postgres",
           "phoenix_starter.gen.sqlite"
         ]
@@ -58,6 +59,7 @@ if Code.ensure_loaded?(Igniter) do
       |> Igniter.compose_task("phoenix_starter.gen.npm", [])
       |> Igniter.compose_task("phoenix_starter.gen.core_contexts", [])
       |> Igniter.compose_task("phoenix_starter.gen.page_meta", [])
+      |> Igniter.compose_task("phoenix_starter.gen.home_live", [])
       |> Igniter.compose_task("phoenix_starter.gen.postgres", [])
       |> Igniter.compose_task("phoenix_starter.gen.sqlite", [])
     end

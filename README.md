@@ -46,6 +46,7 @@ All tasks are idempotent — re-running them on the same project state is a no-o
 | `phoenix_starter.gen.sqlite` | Moves a SQLite-backed project's dev/test databases into `priv/db/<name>_(dev\|test).db` and adds matching gitignore patterns. The DB name defaults to the project directory's basename with its file extension stripped (`lingofox.ai` → `lingofox`); override with `--db-name`. Aborts if `:ecto_sqlite3` is not in deps. |
 | `phoenix_starter.gen.core_contexts` | Adds the exfoundry "core contexts" combo: `ecto_context` (scoped CRUD + permissions) and `static_context` (in-memory lookup data). Wires both into `.formatter.exs`. |
 | `phoenix_starter.gen.page_meta` | Adds `phoenix_page_meta` and triggers its installer: creates the project-local `<AppWeb>.PageMeta` struct, injects SEO `<MetaTags>` into `root.html.heex`, and wires LiveView callbacks. |
+| `phoenix_starter.gen.home_live` | Replaces the default Phoenix page controller with `<AppWeb>.HomeLive`. Rewrites the `get "/", PageController, :home` route to `live "/", HomeLive, :index`, removes the controller, HTML module, template, and test. Installs `phoenix_page_meta` as a dep. |
 
 ## Architecture
 
@@ -72,6 +73,7 @@ In rough order of priority:
 - [x] `PhoenixStarter.Project.Claude` helper — `add_hook/2` for composable Claude-hook registration.
 - [x] `gen.npm` — Node in the Nix shell + `.gitignore` entry.
 - [x] `PhoenixStarter.Project.Npm` helper — `add_dependency/4`, `remove_dependency/2` for composable `package.json` edits.
+- [x] `gen.home_live` — replaces the default Phoenix page controller with a LiveView home page.
 - [x] `PhoenixStarter.Project.Flake` helper — `add_build_input/2`, `add_shell_hook/3` (regex-anchored on `pkgs.elixir_*`).
 - [x] `gen.postgres` — wires existing Postgres-backed projects for managed local Postgres via `pg_spawner`.
 - [x] `gen.sqlite` — moves SQLite dev/test databases into `priv/db/`.
