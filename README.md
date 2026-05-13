@@ -38,6 +38,7 @@ All tasks are idempotent — re-running them on the same project state is a no-o
 |---|---|
 | `phoenix_starter.install` | Aggregator. Runs every applicable `gen.*` task. |
 | `phoenix_starter.gen.flake` | Creates a minimal Nix dev shell (`flake.nix` + `flake.lock`), adds `/.nix/` to `.gitignore`. |
+| `phoenix_starter.gen.postgres` | Wires a Postgres-backed project for managed local Postgres via `pg_spawner`. Adds the dep, drops `pkgs.postgresql_18` into the flake, exports `PGPORT=15432` in the shellHook, sets the Repo port in `config/dev.exs`, ignores `/priv/db/`. Aborts with a warning if `:postgrex` is not in deps. |
 
 ## Architecture
 
@@ -58,8 +59,8 @@ Each feature is one task. A feature task owns *every* file change needed to inst
 In rough order of priority:
 
 - [x] `gen.flake` — base Nix dev shell.
-- [ ] `PhoenixStarter.Project.Flake` helper — `add_build_input/2`, `add_shell_hook/3` (regex-anchored on `pkgs.elixir_*`).
-- [ ] `gen.postgres` — adds `postgrex`/`ecto_sql`, `Platform.Repo` config, Postgres in flake (`buildInputs` + initdb/spawner `shellHook`), `/priv/db/` to `.gitignore`. Flag: `--pgvector`.
+- [x] `PhoenixStarter.Project.Flake` helper — `add_build_input/2`, `add_shell_hook/3` (regex-anchored on `pkgs.elixir_*`).
+- [x] `gen.postgres` — wires existing Postgres-backed projects for managed local Postgres via `pg_spawner`.
 - [ ] `gen.kamal` — `config/deploy.yml`, Ruby in flake, gem dir in `.gitignore`.
 - [ ] `gen.assets` — adds Node to flake when `assets/package.json` is present.
 - [ ] `gen.context_namespace` — enforces the `Platform.<Namespace>.<Context>` convention (overrides Phoenix's default `phx.gen.context` location).

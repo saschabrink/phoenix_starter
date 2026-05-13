@@ -34,13 +34,15 @@ if Code.ensure_loaded?(Igniter) do
       %Igniter.Mix.Task.Info{
         group: :phoenix_starter,
         example: __MODULE__.Docs.example(),
-        composes: ["phoenix_starter.gen.flake"]
+        composes: ["phoenix_starter.gen.flake", "phoenix_starter.gen.postgres"]
       }
     end
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      Igniter.compose_task(igniter, "phoenix_starter.gen.flake", [])
+      igniter
+      |> Igniter.compose_task("phoenix_starter.gen.flake", [])
+      |> Igniter.compose_task("phoenix_starter.gen.postgres", [])
     end
   end
 else
