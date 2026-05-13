@@ -38,6 +38,7 @@ All tasks are idempotent — re-running them on the same project state is a no-o
 |---|---|
 | `phoenix_starter.install` | Aggregator. Runs every applicable `gen.*` task. |
 | `phoenix_starter.gen.flake` | Creates a minimal Nix dev shell (`flake.nix` + `flake.lock`), adds `/.nix/` to `.gitignore`. |
+| `phoenix_starter.gen.direnv` | Creates a universal `.envrc` (`dotenv_if_exists` + `use flake .`), adds `/.direnv/` and `.env` to `.gitignore`. |
 | `phoenix_starter.gen.formatter` | Sets `line_length: 150` in `.formatter.exs`. |
 | `phoenix_starter.gen.format_hook` | Drops a Claude Code post-write hook that runs `mix format` on `.ex/.exs` files. Registers in `.claude/settings.json`. |
 | `phoenix_starter.gen.memex` | Sets up [memex](https://github.com/exfoundry/memex): writes `memex.toml`, creates `docs/<name>/.gitkeep`, drops blueprint-injection + test-coverage hooks and registers them. |
@@ -67,6 +68,7 @@ Each feature is one task. A feature task owns *every* file change needed to inst
 In rough order of priority:
 
 - [x] `gen.flake` — base Nix dev shell.
+- [x] `gen.direnv` — universal `.envrc` + `.direnv/`/`.env` gitignore.
 - [x] `gen.formatter` — sets `line_length: 150`.
 - [x] `gen.format_hook` — Claude Code post-write hook for `mix format`.
 - [x] `gen.memex` — memex.toml + Claude blueprint-injection hooks.
