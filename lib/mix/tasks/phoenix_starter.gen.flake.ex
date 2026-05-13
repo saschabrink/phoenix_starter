@@ -37,10 +37,12 @@ if Code.ensure_loaded?(Igniter) do
 
     use Igniter.Mix.Task
 
-    @template_path :code.priv_dir(:phoenix_starter)
-                   |> Path.join("templates/flake.nix")
-    @external_resource @template_path
-    @template File.read!(@template_path)
+    @flake_nix_path Path.join(:code.priv_dir(:phoenix_starter), "templates/flake.nix")
+    @flake_lock_path Path.join(:code.priv_dir(:phoenix_starter), "templates/flake.lock")
+    @external_resource @flake_nix_path
+    @external_resource @flake_lock_path
+    @flake_nix File.read!(@flake_nix_path)
+    @flake_lock File.read!(@flake_lock_path)
 
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
@@ -54,7 +56,9 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      Igniter.create_new_file(igniter, "flake.nix", @template, on_exists: :skip)
+      igniter
+      |> Igniter.create_new_file("flake.nix", @flake_nix, on_exists: :skip)
+      |> Igniter.create_new_file("flake.lock", @flake_lock, on_exists: :skip)
     end
   end
 else
