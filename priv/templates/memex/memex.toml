@@ -8,11 +8,11 @@ also_scan = ["CLAUDE.md", "AGENTS.md", "TODOS.md"]
 [{{project_name}}]
 mount = "docs/{{project_name}}"
 
-# Shared Phoenix/LiveView blueprints. Cloned from the exfoundry remote;
+# Shared Phoenix/LiveView blueprints. Cloned from the remote below;
 # `memex sync` pulls updates. Auto-gitignored.
 [phoenix-framework]
 mount  = "docs/phoenix-framework"
-remote = "https://github.com/exfoundry/memex-blueprints-phoenix-framework.git"
+remote = "https://github.com/saschabrink/memex-blueprints-phoenix-framework.git"
 
 # Hex dependency usage-rules. Each package ships a `usage-rules.md` at
 # the root of its deps dir; index_filename maps it to the parent slug.
