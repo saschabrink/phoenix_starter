@@ -1,6 +1,6 @@
 # phoenix_starter
 
-Opinionated [Igniter](https://github.com/ash-project/igniter)-based starter that bootstraps Phoenix projects with the conventions used across [Sascha Brink's](https://github.com/saschabrink) projects (Nix dev shell, namespaced contexts, Kamal deploys, locale routes, etc.).
+Opinionated [Igniter](https://github.com/ash-project/igniter)-based starter that bootstraps Phoenix projects with the conventions I use across [my projects](https://github.com/saschabrink) (Nix dev shell, namespaced contexts, Kamal deploys, locale routes, etc.).
 
 **Status:** early. Currently ships one task (`gen.flake`). See [Roadmap](#roadmap).
 
