@@ -54,7 +54,7 @@ if Code.ensure_loaded?(Igniter) do
       %Igniter.Mix.Task.Info{
         group: :phoenix_starter,
         example: __MODULE__.Docs.example(),
-        installs: [{:phoenix_page_meta, "~> 0.1.2"}]
+        composes: ["phoenix_starter.gen.page_meta"]
       }
     end
 

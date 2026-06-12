@@ -41,7 +41,13 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     @impl Igniter.Mix.Task
-    def igniter(igniter), do: igniter
+    def igniter(igniter) do
+      if Code.ensure_loaded?(Mix.Tasks.PhoenixPageMeta.Install) do
+        Igniter.compose_task(igniter, "phoenix_page_meta.install", [])
+      else
+        igniter
+      end
+    end
   end
 else
   defmodule Mix.Tasks.PhoenixStarter.Gen.PageMeta do
