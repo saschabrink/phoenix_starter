@@ -9,7 +9,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.CoreContexts.Docs do
     """
     #{short_doc()}
 
-    Adds two exfoundry packages and triggers their respective installers,
+    Adds two packages and triggers their respective installers,
     which handle each lib's own setup (formatter import, etc.):
 
     - `ecto_context` — scoped CRUD with a permission layer via macro DSL

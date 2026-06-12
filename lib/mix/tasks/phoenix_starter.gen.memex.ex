@@ -9,7 +9,7 @@ defmodule Mix.Tasks.PhoenixStarter.Gen.Memex.Docs do
     """
     #{short_doc()}
 
-    Configures [memex](https://github.com/exfoundry/memex) for blueprint-driven
+    Configures [memex](https://github.com/saschabrink/memex) for blueprint-driven
     development:
 
     - Writes `memex.toml` with the detected project name, the shared
